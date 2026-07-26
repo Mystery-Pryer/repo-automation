@@ -1,0 +1,80 @@
+name: Reusable Resume Library Quality
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        description: Python version used for validation
+        required: false
+        type: string
+        default: "3.12"
+      validator-path:
+        description: Repository-relative resume validator path
+        required: false
+        type: string
+        default: scripts/validate_resume_library.py
+      library-path:
+        description: Repository-relative resume library directory
+        required: false
+        type: string
+        default: resumes/organized
+      report-path:
+        description: Repository-relative validation report path
+        required: false
+        type: string
+        default: artifacts/resume-quality-summary.json
+      package-path:
+        description: Repository-relative ZIP package path
+        required: false
+        type: string
+        default: artifacts/application-ready-resume-library.zip
+      artifact-name:
+        description: Uploaded artifact name
+        required: false
+        type: string
+        default: career-operations-resume-quality
+      retention-days:
+        description: Artifact retention period
+        required: false
+        type: number
+        default: 14
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate resume library
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out caller repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Validate Markdown, DOCX, PDF and manifest
+        shell: bash
+        run: python "${{ inputs.validator-path }}"
+
+      - name: Package application-ready library
+        if: success()
+        shell: bash
+        run: |
+          mkdir -p "$(dirname "${{ inputs.package-path }}")"
+          zip -r "${{ inputs.package-path }}" "${{ inputs.library-path }}" \
+            -x "*/README.md" "*/RESUME_AUDIT.md"
+
+      - name: Upload validation report and resume package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: |
+            ${{ inputs.report-path }}
+            ${{ inputs.package-path }}
+          if-no-files-found: warn
+          retention-days: ${{ inputs.retention-days }}
