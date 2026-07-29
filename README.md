@@ -13,7 +13,7 @@ This repository centralizes generic quality-gate logic so project repositories o
 
 ## Versioning
 
-Caller repositories should pin reusable workflows to the immutable release branch `v1` or, for maximum reproducibility, to a specific commit SHA. Changes are tested through pull requests before the `v1` reference is advanced.
+Critical callers should pin reusable workflows to a full immutable commit SHA. The movable `v1` reference is a compatibility convenience and may advance only to an exact commit that passed self-validation and the minimal caller fixture in a pull request. Update caller pins through separate reviewed PRs with successful checks.
 
 ## Security
 
