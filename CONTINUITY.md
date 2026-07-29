@@ -78,3 +78,8 @@ Do not claim completion when validation failed, downstream impact is unknown, or
 ## Clean-caller test
 
 Periodically test the reusable workflow from a minimal caller repository pinned to the intended reference. Record undocumented permissions, path assumptions, missing inputs, artifact mismatches, and caller-specific dependencies as continuity defects.
+
+
+## Coordinated DQE safeguards
+
+Read `governance/managed_repository_scope.md` and `governance/promotion_manifest_standard.md` before cross-repository or promotion work.
