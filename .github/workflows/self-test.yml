@@ -1,0 +1,24 @@
+name: Shared Workflow Self-Test
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/validate_repository.py
+  minimal-caller:
+    uses: ./.github/workflows/repository-quality.yml
+    with:
+      validator-path: fixtures/minimal-caller/scripts/validate_repository.py
+      install-requirements: false
+      artifact-name: minimal-caller-report
+      artifact-path: artifacts/repository-quality-summary.json

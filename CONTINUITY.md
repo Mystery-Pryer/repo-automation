@@ -6,13 +6,13 @@ This repository provides shared GitHub Actions workflows used by other repositor
 
 GitHub is the durable source of truth. Local workflow experiments, editor state, chat history, and uncommitted files are temporary execution context only.
 
-## Source-of-truth order
+## Source-of-truth and authority
 
-1. Verified remote repository state.
-2. Committed workflow files, README, release references, tests, and caller documentation.
-3. Verified GitHub Actions evidence and downstream caller results.
-4. Current user instruction.
-5. Chat or machine-local context only when it does not conflict with the repository.
+1. Safety, privacy, authorization, and non-destructive constraints always govern.
+2. Current explicit user intent governs intended changes.
+3. Verified remote state governs facts, history, and progress.
+4. Committed workflows, policies, tests, and caller documentation govern execution unless deliberately changed.
+5. Verified Actions evidence governs validation claims; local/chat context is temporary.
 
 ## Session start
 
@@ -21,11 +21,11 @@ Before substantive work:
 1. Confirm the repository, `origin`, branch, requested workflow, and affected callers.
 2. Run `git fetch --prune` and inspect `git status -sb`.
 3. Compare local and remote history; fast-forward only when the tree is clean and the branch is only behind.
-4. Stop on dirty, divergent, unexpected-remote, conflict, or unresolved-ahead states.
+4. On a dirty checkout, fetch and inspect without altering it; when safe, create an isolated worktree from the verified remote default branch. Stop if that cannot be done safely.
 5. Re-read `README.md`, affected workflow files, current release references, and known caller expectations.
 6. Record the governing commit SHA in substantive change notes or pull requests.
 
-Never use force push, hard reset, automatic rebase, automatic merge, or automatic stash/pop to hide synchronization problems.
+Never reset, rebase, force-push, auto-stash, overwrite, discard, or silently merge existing work.
 
 ## Shared-workflow change control
 
@@ -43,8 +43,8 @@ Generic checks belong in this repository. Repository-specific business rules, pr
 
 ## Versioning and caller safety
 
-- Caller repositories should pin reusable workflows to `v1` or a specific commit SHA.
-- Do not move `v1` until the proposed workflow change has been reviewed and validated.
+- Critical callers should pin reusable workflows to an immutable commit SHA; `v1` is a compatibility convenience.
+- Do not move `v1` until the exact proposed commit passes this repository's self-validation and minimal caller fixture in a pull request.
 - Breaking behavior requires an explicit compatibility decision and normally a new immutable release reference.
 - Do not silently change required inputs, permissions, artifact names, supported file types, or failure semantics.
 - Keep workflows read-only unless a reviewed requirement justifies broader permissions.
@@ -78,3 +78,8 @@ Do not claim completion when validation failed, downstream impact is unknown, or
 ## Clean-caller test
 
 Periodically test the reusable workflow from a minimal caller repository pinned to the intended reference. Record undocumented permissions, path assumptions, missing inputs, artifact mismatches, and caller-specific dependencies as continuity defects.
+
+
+## Coordinated DQE safeguards
+
+Read `governance/managed_repository_scope.md` and `governance/promotion_manifest_standard.md` before cross-repository or promotion work.
